@@ -1,5 +1,5 @@
 """
-This script works on top of the file structure created by query_tcga.py and shoud be ran after that
+This script works on top of the file structure created by a_query_tcga.py and shoud be ran after that
 Per project it takes all the raw sample files downloaded and combines them in one dataset file hdf5 and/or csv
 It will also use the mygene (and biomart) api translate the ensemble id and determine the gene type
 It will split the noncoding genes and coding genes based on that information

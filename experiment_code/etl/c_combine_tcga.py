@@ -1,5 +1,5 @@
 """
-This script woks on top of the dataset files created by the process_tcga.py so should be ran after that one
+This script woks on top of the dataset files created by the b_process_tcga.py so should be ran after that one
 The goal is to combine all the serperate data files label sets per project into two complete files
 """
 
