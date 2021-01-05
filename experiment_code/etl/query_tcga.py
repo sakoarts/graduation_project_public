@@ -35,12 +35,14 @@ abv_data_type = {
 # Dictionary mapping a file type abreviation to its official file category in the TCGA database
 abv_data_cat = {
     'exp' : 'Transcriptome Profiling',
+    'meth' : 'DNA Methylation'
 }
 
 # The Case information categories of which labels should be downloaded per case
 expand_case_labels = ['diagnoses', 'demographic', 'exposures']
 # The header to the case label file, currently contains all labels availbe in above categories, if more labels are found, the program will give a warning
-case_label_header = ['age_at_diagnosis', 'alcohol_history', 'alcohol_intensity', 'bmi', 'cigarettes_per_day', 'classification_of_tumor', 'days_to_birth', 'days_to_death', 'days_to_last_follow_up', 'days_to_last_known_disease_status', 'days_to_recurrence', 'demographic_created_datetime', 'demographic_id', 'demographic_submitter_id', 'demographic_updated_datetime', 'diagnoses_created_datetime', 'diagnoses_submitter_id', 'diagnoses_updated_datetime', 'diagnosis_id', 'ethnicity', 'exposure_id', 'exposures_created_datetime', 'exposures_submitter_id', 'exposures_updated_datetime', 'gender', 'height', 'last_known_disease_status', 'morphology', 'primary_diagnosis', 'prior_malignancy', 'progression_or_recurrence', 'race', 'site_of_resection_or_biopsy', 'state', 'tissue_or_organ_of_origin', 'tumor_grade', 'tumor_stage', 'vital_status', 'weight', 'year_of_birth', 'year_of_death', 'years_smoked']
+#case_label_header = ['age_at_diagnosis', 'alcohol_history', 'alcohol_intensity', 'bmi', 'cigarettes_per_day', 'classification_of_tumor', 'days_to_birth', 'days_to_death', 'days_to_last_follow_up', 'days_to_last_known_disease_status', 'days_to_recurrence', 'demographic_created_datetime', 'demographic_id', 'demographic_submitter_id', 'demographic_updated_datetime', 'diagnoses_created_datetime', 'diagnoses_submitter_id', 'diagnoses_updated_datetime', 'diagnosis_id', 'ethnicity', 'exposure_id', 'exposures_created_datetime', 'exposures_submitter_id', 'exposures_updated_datetime', 'gender', 'height', 'last_known_disease_status', 'morphology', 'primary_diagnosis', 'prior_malignancy', 'progression_or_recurrence', 'race', 'site_of_resection_or_biopsy', 'state', 'tissue_or_organ_of_origin', 'tumor_grade', 'tumor_stage', 'vital_status', 'weight', 'year_of_birth', 'year_of_death', 'years_smoked']
+case_label_header = ['age_at_diagnosis', 'age_at_index', 'age_at_onset', 'age_is_obfuscated', 'ajcc_clinical_m', 'ajcc_clinical_n', 'ajcc_clinical_stage', 'ajcc_clinical_t', 'ajcc_pathologic_m', 'ajcc_pathologic_n', 'ajcc_pathologic_stage', 'ajcc_pathologic_t', 'ajcc_staging_system_edition', 'alcohol_days_per_week', 'alcohol_drinks_per_day', 'alcohol_history', 'alcohol_intensity', 'anaplasia_present', 'anaplasia_present_type', 'ann_arbor_b_symptoms', 'ann_arbor_clinical_stage', 'ann_arbor_extranodal_involvement', 'ann_arbor_pathologic_stage', 'asbestos_exposure', 'best_overall_response', 'bmi', 'breslow_thickness', 'burkitt_lymphoma_clinical_variant', 'cause_of_death', 'cause_of_death_source', 'child_pugh_classification', 'cigarettes_per_day', 'circumferential_resection_margin', 'classification_of_tumor', 'coal_dust_exposure', 'cog_liver_stage', 'cog_neuroblastoma_risk_group', 'cog_renal_stage', 'cog_rhabdomyosarcoma_risk_group', 'country_of_residence_at_enrollment', 'days_to_best_overall_response', 'days_to_birth', 'days_to_death', 'days_to_diagnosis', 'days_to_last_follow_up', 'days_to_last_known_disease_status', 'days_to_recurrence', 'demographic_created_datetime', 'demographic_id', 'demographic_submitter_id', 'demographic_updated_datetime', 'diagnoses_created_datetime', 'diagnoses_submitter_id', 'diagnoses_updated_datetime', 'diagnosis_id', 'enneking_msts_grade', 'enneking_msts_metastasis', 'enneking_msts_stage', 'enneking_msts_tumor_site', 'environmental_tobacco_smoke_exposure', 'esophageal_columnar_dysplasia_degree', 'esophageal_columnar_metaplasia_present', 'ethnicity', 'exposure_duration', 'exposure_id', 'exposure_type', 'exposures_created_datetime', 'exposures_submitter_id', 'exposures_updated_datetime', 'figo_stage', 'figo_staging_edition_year', 'first_symptom_prior_to_diagnosis', 'gastric_esophageal_junction_involvement', 'gender', 'gleason_grade_group', 'gleason_grade_tertiary', 'gleason_patterns_percent', 'goblet_cells_columnar_mucosa_present', 'greatest_tumor_dimension', 'gross_tumor_weight', 'height', 'icd_10_code', 'igcccg_stage', 'inpc_grade', 'inpc_histologic_group', 'inrg_stage', 'inss_stage', 'international_prognostic_index', 'irs_group', 'irs_stage', 'ishak_fibrosis_score', 'iss_stage', 'largest_extrapelvic_peritoneal_focus', 'last_known_disease_status', 'laterality', 'lymph_node_involved_site', 'lymph_nodes_positive', 'lymph_nodes_tested', 'lymphatic_invasion_present', 'margin_distance', 'margins_involved_site', 'marijuana_use_per_week', 'masaoka_stage', 'medulloblastoma_molecular_classification', 'metastasis_at_diagnosis', 'metastasis_at_diagnosis_site', 'method_of_diagnosis', 'micropapillary_features', 'mitosis_karyorrhexis_index', 'mitotic_count', 'morphology', 'non_nodal_regional_disease', 'non_nodal_tumor_deposits', 'occupation_duration_years', 'ovarian_specimen_status', 'ovarian_surface_involvement', 'pack_years_smoked', 'papillary_renal_cell_type', 'percent_tumor_invasion', 'perineural_invasion_present', 'peripancreatic_lymph_nodes_positive', 'peripancreatic_lymph_nodes_tested', 'peritoneal_fluid_cytological_status', 'pregnant_at_diagnosis', 'premature_at_birth', 'primary_diagnosis', 'primary_gleason_grade', 'prior_malignancy', 'prior_treatment', 'progression_or_recurrence', 'race', 'radon_exposure', 'residual_disease', 'respirable_crystalline_silica_exposure', 'secondary_gleason_grade', 'secondhand_smoke_as_child', 'site_of_resection_or_biopsy', 'smoking_frequency', 'state', 'supratentorial_localization', 'synchronous_malignancy', 'time_between_waking_and_first_smoke', 'tissue_or_organ_of_origin', 'tobacco_smoking_onset_year', 'tobacco_smoking_quit_year', 'tobacco_smoking_status', 'tobacco_use_per_day', 'transglottic_extension', 'tumor_confined_to_organ_of_origin', 'tumor_depth', 'tumor_focality', 'tumor_grade', 'tumor_largest_dimension_diameter', 'tumor_regression_grade', 'tumor_stage', 'type_of_smoke_exposure', 'type_of_tobacco_used', 'vascular_invasion_present', 'vascular_invasion_type', 'vital_status', 'weeks_gestation_at_birth', 'weight', 'weiss_assessment_score', 'wilms_tumor_histologic_subtype', 'year_of_birth', 'year_of_death', 'year_of_diagnosis', 'years_smoked']
 # The labels that will be in each label category and therefor will not be unique
 recurrent_labels = ['updated_datetime', 'submitter_id', 'created_datetime']
 
@@ -71,7 +73,7 @@ def get_all_projects_by_filetype(data_abv):
 
 # Gets all availeble project codes
 def get_all_projects(data_abv=None):
-    query = '?from=0&size=1000&sort=project.project_id:asc'
+    query = '?from=0&size=1000' #&sort=project.project_id:asc'
     if data_abv is not None:
         query += '&expand=summary.data_categories'
     resp_dict = endpoint_to_dict('projects', query)
@@ -97,7 +99,15 @@ def get_all_projects(data_abv=None):
 # Takes type id tag and returns a boolean representing if the sample is tumerous or not
 def sample_type_id_is_tumor(type_id):
     # return true if first char is 1, false if 0
-    tumor_tag = int(type_id[0])
+    if type_id:
+        try:
+            tumor_tag = int(type_id[0])
+        except Exception as e:
+            print('No valid type id (not 0 or 1) found: {}'.format(type_id))
+            return None
+    else:
+        print('WARNING uncertain type, type_id is None'.format(type_id))
+        return None
     if tumor_tag == 1:
         return False
     elif tumor_tag == 0:
@@ -188,14 +198,15 @@ def downloadFile(fid, x=10):
     i = 0
     while i < x:
         try:
-            response = urllib.request.urlretrieve("https://gdc-api.nci.nih.gov/data/" + fid)
+            response = urllib.request.urlretrieve("https://api.gdc.cancer.gov/data/" + fid)
             break
         except Exception as e:
-            print('Error while retrieving file, attempt {}'.format(i))
+            print('Error while retrieving file, attempt {}/{}'.format(i,x))
             print(e)
+            i += 1
     else:
         print('Download still failed after {} times, skipping file {} for now'.format(x, fid))
-        i += 1
+
 
     return response
 
@@ -214,7 +225,10 @@ def getFileIdOfDataType(dataType, caseId):
         if dataType in 'Gene Expression Quantification':
             if exp_file_type in h["file_name"]:
                 fid = h["file_id"]
-                sample_type_id = h['cases'][0]['samples'][0]['sample_type_id']
+                if 'sample_type_id' in h['cases'][0]['samples'][0]:
+                    sample_type_id = h['cases'][0]['samples'][0]['sample_type_id']
+                else:
+                    sample_type_id = 'unkown'
                 file_ids.append([fid, sample_type_id])
         else:
             file_ids.append(h["file_id"])
@@ -324,7 +338,10 @@ def download_files_of_type_of_cases(data_abv, cases, verbose=100):
 
 
         for fid_tumor in fid_tumor_list:
-            fid = fid_tumor[0]
+            if type(fid_tumor) == list:
+                fid = fid_tumor[0]
+            else:
+                fid = fid_tumor
             tumor = sample_type_id_is_tumor(fid_tumor[1])
             if tumor is None:
                 print('Skipping {} due to unvalid tumor indicator'.format(fid))

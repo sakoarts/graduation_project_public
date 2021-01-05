@@ -126,10 +126,10 @@ def ensemble_translator(ens_v, cache_path='../data/cache', get_gene_type_from_bi
     mg = MyGeneInfo()
     mg.set_caching(cache_db=os.path.join(cache_path, 'mygene_cache'))
 
-    gene_info = mg.getgenes(geneids=ens, fields='symbol,entrezgene,type_of_gene,ensembl.type_of_gene', as_dataframe=True, df_index=False)
+    gene_info = mg.getgenes(ens, fields='symbol,entrezgene,type_of_gene,ensembl.type_of_gene', as_dataframe=True, df_index=False)
     gene_info = gene_info.drop_duplicates('query').reset_index()
     # get type of gene string from ensembl dictionary
-    gene_info['biomart_type_of_gene'] = gene_info['ensembl'].apply(lambda x: (type(x) is dict and x['type_of_gene']) or (type(x) is list and x[0]['type_of_gene']) or x)
+    gene_info['biomart_type_of_gene'] = gene_info['ensembl.type_of_gene'].fillna(gene_info['ensembl'].apply(lambda x: x[0]['type_of_gene'] if type(x) is list else x))
 
     # get gene type
     if get_gene_type_from_biomart_api:
@@ -185,6 +185,9 @@ def walk_path_datatype(path, data_abv, csv=True, map_symbol_entrez_coding=True):
         if idx % 50 == 0:
             print('Reading {}/{}'.format(idx, len(dirs) + 1))
 
+    if not exp_data:
+        print(f'No folders containing case data are present in {path}')
+        return
     print('Creating dataframe')
     exp_data = pd.DataFrame.from_dict(exp_data)
     exp_data = exp_data.set_index(exp_header, drop=True)

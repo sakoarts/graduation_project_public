@@ -37,12 +37,16 @@ with h5py.File(os.path.join(data_path, out_file), 'w') as hf:
         print('Handeling project {}'.format(project))
 
         project_path = '../data/TCGA/{}'.format(project)
+        data_file_path = os.path.join(project_path, data_file)
+        if not os.path.isfile(data_file_path):
+            print(f'No such file: {data_file_path}')
+            continue
 
         label_df = pd.read_csv(os.path.join(project_path, label_file), header=0, index_col=2)
 
         case_labels = pd.read_csv(os.path.join(project_path, case_label_file), header=0, index_col=0)
 
-        data_h5 = h5py.File(os.path.join(project_path, data_file))
+        data_h5 = h5py.File(data_file_path)
 
         if gene_ids is None:
             gene_ids = data_h5['gene_id'][:].astype('S')

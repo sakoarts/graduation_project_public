@@ -23,7 +23,7 @@ def new_stage_label(df):
               3.75, 4, 4.25, 4.5, 4.75, 5]
     stage_float = pd.Series(floats, index=stages)
 
-    float_series = stage_series.apply(lambda x: stage_float[x] if x is not np.nan else np.nan)
+    float_series = stage_series.map(stage_float)
     stage_diagnosis = float_series.apply(lambda x: 'early' if x < 3 else 'late')
 
     df['tumor_stage_float'] = float_series
