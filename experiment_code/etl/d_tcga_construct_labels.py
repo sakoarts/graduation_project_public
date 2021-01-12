@@ -78,13 +78,13 @@ def serie_to_survivor(serie):
 
     survivor = np.nan
     days_survived = np.nan
-    if vital_status == 'alive':
+    if vital_status == 'Alive':
         days_survived = days_to_last_follow_up
         if days_survived >= long_threshold_days:
             survivor = 'long'
         else:
             survivor = 'yet_unkown'
-    elif vital_status == 'dead':
+    elif vital_status == 'Dead':
         days_survived = days_to_death
         if days_survived >= long_threshold_days:
             survivor = 'long'
