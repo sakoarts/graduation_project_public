@@ -41,8 +41,7 @@ def evaluate_model(m, X_test, y_test, labels=None, plot=False, roc_auc=True):
     return scores, cm
 
 def get_confusion_matrix(y_test, y_pred, labels):
-    cm = confusion_matrix(y_test, y_pred, labels=labels)
-    return cm
+    return confusion_matrix(y_test, y_pred, labels=labels)
 
 def plot_metrics(m, X_test, y_test, labels, y_pred=None):
     if y_pred is None:
@@ -82,9 +81,9 @@ def calc_roc_auc(m, X_test, y_test, labels, plot=False):
     lb = LabelBinarizer().fit(m.classes_)
     y_test_lb = lb.transform(y_test)
 
-    fpr = dict()
-    tpr = dict()
-    roc_auc = dict()
+    fpr = {}
+    tpr = {}
+    roc_auc = {}
     if len(y_score.shape) < 2:
         y_score = np.expand_dims(y_score, 1)
     for idx, i in enumerate(labels):
@@ -97,8 +96,8 @@ def calc_roc_auc(m, X_test, y_test, labels, plot=False):
 
     if plot:
         lw = 2
-        for key in roc_auc.keys():
-            plt.plot(fpr[key], tpr[key], lw=lw, label=key + ' (auc=%0.2f)' % roc_auc[key])
+        for key, value in roc_auc.items():
+            plt.plot(fpr[key], tpr[key], lw=lw, label=key + ' (auc=%0.2f)' % value)
         plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
@@ -115,40 +114,40 @@ def get_dendro_heatmap(selected_genes, gene_labels, sample_to_label, nb_genes_us
     if nb_genes_used is not None:
         selected_genes = selected_genes[:nb_genes_used]
         gene_labels = gene_labels[:nb_genes_used]
-    
+
     selected_samples = np.transpose(selected_genes)
     sample_labels = sample_to_label.index.values
     subtype_labels = sample_to_label.values
-    
+
     # Initialize Dendograms
     figure = FF.create_dendrogram(selected_samples, orientation='bottom', labels=sample_labels)
     for i in range(len(figure['data'])):
         figure['data'][i]['yaxis'] = 'y2'
-    
+
     dendro_side = FF.create_dendrogram(selected_genes, orientation='right', labels=gene_labels)
     for i in range(len(dendro_side['data'])):
         dendro_side['data'][i]['xaxis'] = 'x2'
-        
+
     figure['data'].extend(dendro_side['data'])
     figure['layout']['yaxis'] = dendro_side['layout']['yaxis']
     samples_dendro_leaves = list(figure['layout']['xaxis']['ticktext'])
     genes_dendro_leaves = list(dendro_side['layout']['yaxis']['ticktext'])
-    
+
     # Set color scales
     c_map, c_map_legend, val_set, val_label = custom_color(sample_to_label, samples_dendro_leaves)
     color_options = ['Viridis', 'Jet', 'Spectral', c_map]
     color_scale = color_options[color_option]
-    
+
     # Create Heatmap
     input_df = pd.DataFrame(selected_genes, index=gene_labels, columns=sample_to_label.index)
     column_order_df = input_df[samples_dendro_leaves]
     reorederd_df = column_order_df.reindex(genes_dendro_leaves)
     heat_data = reorederd_df.as_matrix()
-    
+
     # Z-score normalization
     if z_score:
         heat_data = z_score_normalization(heat_data)
-    
+
     heatmap = Data([
         Heatmap(
             z = heat_data,
@@ -159,7 +158,7 @@ def get_dendro_heatmap(selected_genes, gene_labels, sample_to_label, nb_genes_us
     heatmap[0]['y'] = dendro_side['layout']['yaxis']['tickvals']
     heatmap[0]['x'] = figure['layout']['xaxis']['tickvals']
     figure['data'].extend(Data(heatmap))
-    
+
     # Create Fragmentation plot
     n_genes = len(gene_labels)
     fragmentation_bar = Data([Heatmap(
@@ -168,10 +167,10 @@ def get_dendro_heatmap(selected_genes, gene_labels, sample_to_label, nb_genes_us
         colorscale=c_map,
         showscale = False,
     )])
-    
-    fragmentation_bar[0]['x'] = figure['layout']['xaxis']['tickvals'] 
+
+    fragmentation_bar[0]['x'] = figure['layout']['xaxis']['tickvals']
     figure['data'].extend(Data(fragmentation_bar))
-    
+
     # Edit Layout
     figure['layout'].update({'width':900, 'height':900,
                          'showlegend':False, 'hovermode': 'closest', 
@@ -213,17 +212,19 @@ def get_dendro_heatmap(selected_genes, gene_labels, sample_to_label, nb_genes_us
                                        'side': 'right',
                                        'showticklabels': False,
                                        'ticks':""}})
-    
+
     # Sample label fragmentation legend
-    legends = []
-    for idx, i in val_label.iteritems():
-        legends.append(mpatches.Patch(color=c_map_legend[i][1], label=idx))
+    legends = [
+        mpatches.Patch(color=c_map_legend[i][1], label=idx)
+        for idx, i in val_label.iteritems()
+    ]
+
     legend = plt.figure(figsize=(1, 0.25))
     ax = legend.add_subplot(111)  #create the axes 
     ax.set_axis_off()
     ax.legend(handles=legends, ncol=len(legends))
     plt.close(legend)
-    
+
     return figure, legend, color_scale
 
 def custom_color(sample_to_label, samples_dendro_leaves, color_scale='Spectral'):
@@ -261,8 +262,7 @@ def get_label_bar(sample_to_label):
     layout = Layout(
         barmode='stack'
     )
-    fig = Figure(data=bar_traces, layout=layout)
-    return fig
+    return Figure(data=bar_traces, layout=layout)
                           
 def get_expression_hist(selected_genes, color_scale='Viridis', nb_genes_used=-1, log=True, drop_zero=False, decimals=1, size=10, drop_axis=False, z_score=False):
     selected_genes = selected_genes[:nb_genes_used]
@@ -337,9 +337,7 @@ def pathway_enrichment(gene_names, pipe_section=1, dbs=None, total_genes=20531, 
     if not os.path.exists(cache_path):
         os.makedirs(cache_path)
 
-    gene_ids = []
-    for g in gene_names:
-        gene_ids.append(g.split('|')[pipe_section])
+    gene_ids = [g.split('|')[pipe_section] for g in gene_names]
     gene_info = mg.getgenes(geneids=gene_ids, fields='pathway', as_dataframe=True, df_index=False)
     try:
         pathways = gene_info['pathway']
@@ -350,13 +348,12 @@ def pathway_enrichment(gene_names, pipe_section=1, dbs=None, total_genes=20531, 
         return None
     p_df = []
     for idx, p in pathways.iteritems():
-        if not (p is np.nan or p != p):
+        if p is not np.nan and p == p:
             # print(p)
             path = dict(p)
-            for key in path.keys():
+            for key, p_dict in path.items():
                 if dbs is not None and key not in dbs:
                     continue
-                p_dict = path[key]
                 if type(p_dict) is list:
                     for k in p_dict:
                         p_df.append([k['id'], k['name'], key, str(gene_info['query'][idx])])
@@ -377,10 +374,14 @@ def pathway_enrichment(gene_names, pipe_section=1, dbs=None, total_genes=20531, 
     p_df['sup'] = [len(x) for x in p_df.genes.as_matrix()]
     p_df['size'] = pathway_size
 
-    p_p = []
     nb_slected_genes = len(gene_names)
-    for idx, p_row in p_df.iterrows():
-        p_p.append(hypergeom.sf(p_row['sup'] - 1, total_genes, p_row['size'], nb_slected_genes))
+    p_p = [
+        hypergeom.sf(
+            p_row['sup'] - 1, total_genes, p_row['size'], nb_slected_genes
+        )
+        for idx, p_row in p_df.iterrows()
+    ]
+
     p_df['p_value'] = p_p
 
     p_df = p_df[p_df['p_value'] <= p_cutoff]
@@ -514,14 +515,17 @@ def pathway_df_to_table(p_df, drop_columns=['genes'], name_slice=30, id_slice=15
     table_df = p_df.drop(drop_columns, axis=1)
     table_df['name'] = table_df['name'].apply(lambda x: (x[:name_slice - 3] + '...') if len(x) > name_slice else x)
     table_df['id'] = table_df['id'].apply(lambda x: (x[:id_slice - 3] + '...') if len(x) > id_slice else x)
-    
-    table = tabulate(table_df.as_matrix(), headers=table_df.columns.values, tablefmt='orgtbl')
-    return table
+
+    return tabulate(
+        table_df.as_matrix(),
+        headers=table_df.columns.values,
+        tablefmt='orgtbl',
+    )
 
 def average_results(results, average_cm=True, roc_auc=True, average_keys=['accuracy', 'cohen_kappa', 'precision', 'recall', 'support', 'fscore']):
     if roc_auc:
         average_keys.append(['ROC_AUC', 'micro'])
-    
+
     labels = None
     to_average = {}
     for key in average_keys:
@@ -530,7 +534,7 @@ def average_results(results, average_cm=True, roc_auc=True, average_keys=['accur
         to_average[key] = []
     if average_cm:
         to_average['confusion_matrix'] = []
-        
+
     print('Collecting averages')
     for c_name, c_results in results.items():
         for fold_result in c_results:
@@ -548,9 +552,8 @@ def average_results(results, average_cm=True, roc_auc=True, average_keys=['accur
                 to_average['confusion_matrix'].append(fold_result['confusion_matrix'])
             if labels is None:
                 labels = scores['labels']
-            
-    average = {}
-    average['labels'] = labels
+
+    average = {'labels': labels}
     print('Averaging')
     for key, values in to_average.items():
         average[key] = np.average(values, axis=0)
@@ -558,28 +561,28 @@ def average_results(results, average_cm=True, roc_auc=True, average_keys=['accur
 
 def up_down_regulated(dataset, sample_to_label, label_file, gene_names, predict_label, condisioned_label_name, normal_label=False, kursal=False, p_value=0.05, plot=False):
     gene_data = np.transpose(dataset)
-    
+
     label_set = pd.read_csv(label_file, index_col=0, header=0)
     relevant_labels = label_set[[condisioned_label_name, predict_label]]
     normal_labels = relevant_labels[relevant_labels[condisioned_label_name] == normal_label]
     normal_labels = list(normal_labels[predict_label].unique())
     conditioned_labels = relevant_labels[relevant_labels[condisioned_label_name] != normal_label]
     conditioned_labels = list(conditioned_labels[predict_label].unique())
-    
+
     index_sample_label = sample_to_label.reset_index()
     normal_index = index_sample_label[index_sample_label[predict_label].isin(normal_labels)].index.values
     tumorous_index = index_sample_label[index_sample_label[predict_label].isin(conditioned_labels)].index.values
-    
+
     tumorous_samples = gene_data.take(tumorous_index, axis=1)
     normal_samples = gene_data.take(normal_index, axis=1)
-    
+
     mean_exp_tumor = [x.mean() for x in tumorous_samples]
     mean_exp_normal = [x.mean() for x in normal_samples]
 
     regulation = np.subtract(mean_exp_tumor, mean_exp_normal)    
-    
+
     gene_regulation = pd.Series(regulation, index=gene_names).sort_values()
-    
+
     if kursal:
         print('Calculating Kurskal values')
         from scipy.stats import kruskal
@@ -592,24 +595,19 @@ def up_down_regulated(dataset, sample_to_label, label_file, gene_names, predict_
                 #print('Error occured at gene {}: {}'.format(gene_names[idx], e))
                 kw = np.nan
             kw_samples.append(kw)
-            
+
         kw_p_samples = [x.pvalue if x is not np.nan and x.pvalue <= p_value else x for x in kw_samples]
-        
+
         up_down_kw = []
         for idx, kw in enumerate(kw_p_samples):
             if kw is None:
                 up_down_kw.append(kw)
-                continue
             elif regulation[idx] >= 0:
                 up_down_kw.append(True)
-                continue
-            elif regulation[idx] < 0:
+            else:
                 up_down_kw.append(False)
-                continue
-            
-        up_or_down = pd.Series(up_down_kw, index=gene_names, name='up')
-            
-        return up_or_down
+            continue
+        return pd.Series(up_down_kw, index=gene_names, name='up')
 
     if plot:
         zero = (regulation<0).sum()/len(regulation)
@@ -641,9 +639,7 @@ def up_down_regulated(dataset, sample_to_label, label_file, gene_names, predict_
 def get_pathway_genes(p_id, pathway_df):
     p_row = pathway_df[pathway_df['id'] == p_id]
     ens_ids = p_row['genes'].values[0]
-    symbols = ensemble_to_symbol(ens_ids)
-    
-    return symbols
+    return ensemble_to_symbol(ens_ids)
     
 def ensemble_to_symbol(ens):
     mg = MyGeneInfo()

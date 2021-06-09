@@ -17,11 +17,7 @@ from sacred.observers import MongoObserver
 
 # DEBUG parameters
 DEBUG = True
-if DEBUG:
-    save_model = False
-else:
-    save_model = False
-
+save_model = False
 # create experiment:
 ex = Experiment('PAN_CANCER_clustering_select')
 
@@ -128,9 +124,8 @@ def data(data_path, label_path, subset_label, predict_label, split_label, subset
 def model(classifier_name, classifier_parameters, _seed, update_n_clusters=None):
     model = eval(classifier_name)()
 
-    if update_n_clusters is not None:
-        if 'n_clusters' in model.__dict__:
-            classifier_parameters.update(update_n_clusters)
+    if update_n_clusters is not None and 'n_clusters' in model.__dict__:
+        classifier_parameters.update(update_n_clusters)
 
     if 'random_state' in model.__dict__:
         classifier_parameters.update({'random_state': _seed})

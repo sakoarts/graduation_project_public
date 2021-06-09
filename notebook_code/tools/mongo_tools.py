@@ -7,12 +7,10 @@ with open('../tools/.mongo', 'r') as f:
     client = pymongo.MongoClient(auth_url)
 
 def cout(_id):
-    df = io.StringIO(r.find({'_id': _id})[0]['captured_out']).read()
-    return df
+    return io.StringIO(r.find({'_id': _id})[0]['captured_out']).read()
 
 def experiment_name(_id):
-    df = r.find({'_id': _id})[0]['experiment']['name']
-    return df
+    return r.find({'_id': _id})[0]['experiment']['name']
 
 def runs():
     return db.get_collection('runs')
@@ -21,12 +19,10 @@ def run(_id):
     return r.find({'_id': _id})[0]
 
 def config(_id):
-    df = run(_id)['config']
-    return df
+    return run(_id)['config']
 
 def result(_id):
-    df = run(_id)['result']
-    return df
+    return run(_id)['result']
 
 def source(_id, print_files=False):
     fs = gridfs.GridFS(db)

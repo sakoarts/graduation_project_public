@@ -172,8 +172,7 @@ def train(nb_epoch, samples_per_epoch):
 
     m.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-    callbacks = []
-    callbacks.append(MetricsToCSV(os.path.join(out_path, 'metrics.csv')),)
+    callbacks = [MetricsToCSV(os.path.join(out_path, 'metrics.csv'))]
     if tensorboard:
         callbacks.append(TensorBoard(log_dir=out_path, write_graph=True))
 
@@ -189,8 +188,4 @@ def train(nb_epoch, samples_per_epoch):
     if save_model:
         m.save(os.path.join(out_path, 'model.h5'))
 
-    results = {}
-    for key in history.history.keys():
-        results[key] = history.history[key][-1]
-
-    return results
+    return {key: history.history[key][-1] for key in history.history.keys()}

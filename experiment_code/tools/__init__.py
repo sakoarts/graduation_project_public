@@ -34,9 +34,7 @@ def read_hdf5_file(path):
         data_array[idx][:] = data[key][:]
 
     data_array = np.transpose(data_array)
-    data_df = pd.DataFrame(data_array, index=gene_ids, columns=samples)
-
-    return data_df
+    return pd.DataFrame(data_array, index=gene_ids, columns=samples)
 
 def feature_importances(model, gene_names, n_genes=100):
     imp = None
@@ -107,9 +105,16 @@ def get_intersection(total_genes):
 def get_rank_per_calssifier(total_genes, intersection):
     intersection_rank = {}
     for key in total_genes.keys():
-        ranks = []
-        for i in intersection:
-            ranks.append([i[1], i[0], int(total_genes[key].loc[i]['rank']), total_genes[key].loc[i]['importance']])
+        ranks = [
+            [
+                i[1],
+                i[0],
+                int(total_genes[key].loc[i]['rank']),
+                total_genes[key].loc[i]['importance'],
+            ]
+            for i in intersection
+        ]
+
         intersection_rank[key] = sorted(ranks, key=lambda x: x[2])
         for idx, j in enumerate(intersection_rank[key]):
             intersection_rank[key][idx].append(len(intersection) - idx)

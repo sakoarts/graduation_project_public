@@ -76,11 +76,7 @@ def runs_per_classifier(output):
     return uni_class
 
 def compute_averages(output, plot=False, add_labels=False, skip_keys_add=None, decimal_tab=2, decimal_val=-1, annot=True, cm_normalize=False, res_list=False, table=False):
-    if res_list:
-        results = output
-    else:
-        results = [x['result'] for x in output]
-        
+    results = output if res_list else [x['result'] for x in output]
     skip_keys = ['gene_importance', 'gene_names', 'labels', 'test_pc_shape', 'train_pc_shape', 'test_score_samples', 'train_score_samples']
     if skip_keys_add is not None:
         skip_keys += skip_keys_add
@@ -114,7 +110,7 @@ def compute_averages(output, plot=False, add_labels=False, skip_keys_add=None, d
                 average_runs['{}_variance'.format(key)] = var
         else:
             average_runs[key] = avr
-    
+
     if plot:
         labels = results[0]['labels']['values']
         plot_confusion_matrix(average_runs['confusion_matrix'], labels, large_font=False, decimal=decimal_tab, annot=annot, normalize=cm_normalize)
@@ -179,8 +175,11 @@ def compute_gene_importance(output, plot=False, similarity=None, latex=False):
     return selected_genes
 
 def decode_gene_name(endoded):
-    decoded = base64.b64decode(endoded['py/reduce'][1]['py/tuple'][-1]['py/b64']).replace(b'\x00', b'').decode()
-    return decoded
+    return (
+        base64.b64decode(endoded['py/reduce'][1]['py/tuple'][-1]['py/b64'])
+        .replace(b'\x00', b'')
+        .decode()
+    )
 
 def compute_pathway_enrichment(selected_genes, top_pathways=50, table=False):
     pathway_df = pathway_enrichment(selected_genes)
@@ -219,10 +218,10 @@ def get_best_scores(avg_per_class, avoid_strings=['variance', 'test']):
                 if  any(x in key for x in avoid_strings):
                     continue
                 scores[key] = []
-        
-        for key in scores.keys():
-            scores[key].append((values[key], algo))
-            
+
+        for key, value in scores.items():
+            value.append((values[key], algo))
+
     for score_name, values in scores.items():
         max_val = max(values)
         print('{} top value is {} from {} algorithm'.format(score_name, max_val[0], max_val[1]))
@@ -381,10 +380,9 @@ def get_results_config(output, config, printing=False, drop_labels=[]):
             print('Experiment {} skipped since no results are present'.format(out['_id']))
             continue
         result = out['result']
-        if 'acc' in result:
-            if np.isnan(result['acc']):
-                #print('lossfound {}'.format(idx))
-                continue
+        if 'acc' in result and np.isnan(result['acc']):
+            #print('lossfound {}'.format(idx))
+            continue
         for l in drop_labels:
             result.pop(l, None)
         comps = str(out['config'][config])
@@ -398,7 +396,7 @@ def get_results_config(output, config, printing=False, drop_labels=[]):
             pca_comps[comps].append(result)
         else:
             pca_comps[comps] = [result]
-            
+
     return pca_comps
 
 def pp_metric_dic(result):
@@ -425,14 +423,14 @@ def make_latex_table(dictionary, table=True, skip_keys_add=None):
         for k, v in value.items():
             if first:
                 #if 'variance'
-                head = head + ' &    {}'.format(k)
-            line = line + ' &    {}'.format(v)
+                head += ' &    {}'.format(k)
+            line += ' &    {}'.format(v)
         if first:
-            head = head + ' \\\\'
+            head += ' \\\\'
             first = False
-        line = line + ' \\\\'
+        line += ' \\\\'
         res_table.append(line)
-        
+
     res_table.insert(0, head)
     return res_table
 
@@ -492,7 +490,7 @@ def print_latex_config(output):
     
 def print_latex_prediction_metrics(output):
     classifier_name = output[0]['config']['classifier_name']
-    regression = classifier_name == 'RandomForestRegressor' or classifier_name == 'LinearSVR'
+    regression = classifier_name in ['RandomForestRegressor', 'LinearSVR']
     skipkeys = ['confusion_matrix', 'recall', 'support', 'precision', 'fscore']
     avgs = compute_averages(output, plot=False, decimal_val=4, table=True, skip_keys_add=skipkeys)
     avgC = compute_averages_per_classifier(output, plot=False, decimal_val=4, table=True, skip_keys_add=skipkeys)
@@ -505,7 +503,7 @@ def print_latex_prediction_metrics(output):
         print('Average MSLE: ' + avgs['mean_squared_log_error (var)'] + '\\\\')
         print('Average MdAE: ' + avgs['median_absolute_error (var)'] + '\\\\')
         print('Average $r^2$: ' + avgs['r2_score (var)'] + '\\\\')
-        
+
         lsvm_acc = avgC['LinearSVR']['mean_squared_error (var)']
         print('Average MSE LSVM: ' + lsvm_acc + '\\\\')
         print('Average MdAE LSVM: ' + avgC['LinearSVR']['median_absolute_error (var)'] + '\\\\')
@@ -547,8 +545,7 @@ def avg_to_cr(avgs, output):
     labels = output[0]['result']['labels']['values']
     head = ['fscore', 'precision', 'recall', 'support']
     data = np.asarray([avgs[x] for x in head]).T
-    df = pd.DataFrame(data, index=labels, columns=head)
-    return df
+    return pd.DataFrame(data, index=labels, columns=head)
 
 def print_latex_cr(output):
     avgs = compute_averages(output, plot=False)
@@ -572,7 +569,6 @@ def compare_ids(cur, prev, window=9, printing=False):
                     break
             except IndexError:
                 print('no id {}'.format(idx + rel_idx))
-                pass
     if printing:
         print('Same: {}'.format(same))
     return same/len(cur_ids)
@@ -614,7 +610,7 @@ def latex_genes(genes):
     string = ''
     for g in genes:
         g = escape_latex(g)
-        string = string + '{}, '.format(g)
+        string += '{}, '.format(g)
     string = string[:-2] + '\\\\'
     print(string)
     

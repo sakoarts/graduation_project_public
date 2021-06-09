@@ -26,10 +26,12 @@ def run_calssifier(m, X_train, X_test, y_train, y_test, unique_labels, gene_name
     scores, cm = evaluate_model(m, X_test, y_test, unique_labels, plot=False, roc_auc=roc_auc)
 
     gene_importance = feature_importances(m, gene_names, n_genes=n_genes)
-    
-    results = {'scores': scores, 'confusion_matrix': cm, 'gene_importance': gene_importance}
 
-    return results
+    return {
+        'scores': scores,
+        'confusion_matrix': cm,
+        'gene_importance': gene_importance,
+    }
 
 def get_data(data_file, label_file, subset_label, predict_label, split_label, subset_query, genes_to_select=None):
     # Open file pointers
@@ -148,9 +150,8 @@ def rank_result_on_importance(class_genes):
 
 def get_intersection(total_genes, latex=False, printing=True):
     gene_list = []
-    if printing:
-        if latex:
-            print('\\textbf{Gene analysis:}\\\\\nThe models selected have the following number of genes:\\\\')
+    if printing and latex:
+        print('\\textbf{Gene analysis:}\\\\\nThe models selected have the following number of genes:\\\\')
     for key in total_genes.keys():
         genes = total_genes[key]
         gene_list.append(genes.index)
@@ -160,26 +161,33 @@ def get_intersection(total_genes, latex=False, printing=True):
                 print('{}: {}\\\\'.format(key, len(genes)))
             else:
                 print('The {} Classifier found {} relevant genes over all folds'.format(key, len(genes)))
-        
+
     intersection = reduce(np.intersect1d, gene_list)
     if printing:
             if latex:
                 print('Intersection: {}\\\\'.format(len(intersection)))
             else:
                 print('\nThe total intersection has {} elements'.format(len(intersection)))
-    
+
     return intersection
     
 def get_rank_per_calssifier(total_genes, intersection):
     intersection_rank = {}
     for key in total_genes.keys():
-        ranks = []
-        for i in intersection:
-            ranks.append([i[1], i[0], int(total_genes[key].loc[i]['rank']), total_genes[key].loc[i]['importance']])
+        ranks = [
+            [
+                i[1],
+                i[0],
+                int(total_genes[key].loc[i]['rank']),
+                total_genes[key].loc[i]['importance'],
+            ]
+            for i in intersection
+        ]
+
         intersection_rank[key] = sorted(ranks, key=lambda x:x[2])
         for idx, j in enumerate(intersection_rank[key]):
             intersection_rank[key][idx].append(len(intersection) - idx)
-        
+
     return intersection_rank
         
 def combine_ranks(intersection_rank):

@@ -53,10 +53,8 @@ def bmi_to_label(bmi):
         return 'healthy'
     elif bmi < 30:
         return 'overweight'
-    elif bmi >= 30:
-        return 'obese'
     else:
-        return np.nan
+        return 'obese'
 
 
 # adds a long or short survivor category label and a days survived value
@@ -80,17 +78,10 @@ def serie_to_survivor(serie):
     days_survived = np.nan
     if vital_status == 'Alive':
         days_survived = days_to_last_follow_up
-        if days_survived >= long_threshold_days:
-            survivor = 'long'
-        else:
-            survivor = 'yet_unkown'
+        survivor = 'long' if days_survived >= long_threshold_days else 'yet_unkown'
     elif vital_status == 'Dead':
         days_survived = days_to_death
-        if days_survived >= long_threshold_days:
-            survivor = 'long'
-        else:
-            survivor = 'short'
-
+        survivor = 'long' if days_survived >= long_threshold_days else 'short'
     serie['survivor'] = survivor
     serie['days_survived'] = days_survived
 

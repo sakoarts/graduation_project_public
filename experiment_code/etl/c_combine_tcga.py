@@ -3,6 +3,7 @@ This script woks on top of the dataset files created by the b_process_tcga.py so
 The goal is to combine all the serperate data files label sets per project into two complete files
 """
 
+
 import os, sys
 import pandas as pd
 import h5py
@@ -60,7 +61,7 @@ with h5py.File(os.path.join(data_path, out_file), 'w') as hf:
             if sample == 'gene_id':
                 continue
             tumor = str(label_df['tumor'][sample])
-            if tumor != 'True' and tumor != 'False':
+            if tumor not in ['True', 'False']:
                 print('Error on sample {} tumor indicator {} invalid, skipping...'.format(sample, tumor))
                 continue
 
@@ -75,7 +76,7 @@ with h5py.File(os.path.join(data_path, out_file), 'w') as hf:
             case_id = label_df['case_id'][sample]
             sample_label = [sample, case_id, project, primary_site, tumor, '{}_{}'.format(subtype, tumor)]
             sample_case_labels = list(case_labels.loc[case_id].values)
-            sample_label = sample_label + sample_case_labels
+            sample_label += sample_case_labels
 
             cur_case_labels_header = list(case_labels.columns.values)
             if case_labels_header != cur_case_labels_header:
