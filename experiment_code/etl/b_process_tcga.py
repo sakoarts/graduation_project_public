@@ -234,10 +234,11 @@ def map_all_projects_datatype(data_abv, projects_path='../data/TCGA/', csv=True,
     for idx, project in enumerate(data_projects):
         print('Creating datasets of {} project ({}/{})'.format(project, idx, len(data_projects)))
         project_path = os.path.join(projects_path, project)
-        if not overwrite:
-            if os.path.isfile(os.path.join(project_path, '{}_data.hdf5'.format(data_abv))):
-                print('Skipping project {} hdf5 file for type {} already present'.format(project, data_abv))
-                continue
+        if not overwrite and os.path.isfile(
+            os.path.join(project_path, '{}_data.hdf5'.format(data_abv))
+        ):
+            print('Skipping project {} hdf5 file for type {} already present'.format(project, data_abv))
+            continue
         walk_path_datatype(project_path, data_abv, csv=csv, map_symbol_entrez_coding=map_symbol_entrez_coding)
 
 

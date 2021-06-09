@@ -5,6 +5,7 @@ This experiment is sacred enbeld meaning that it will save the output in a file 
 This experiment does classification and needs to be controlled by the threaded.py script, it will not run on its own
 """
 
+
 import numpy as np
 import pandas as pd
 import h5py
@@ -29,11 +30,7 @@ from sacred.observers import MongoObserver
 
 # DEBUG parameters
 DEBUG = True
-if DEBUG:
-    save_model = False
-else:
-    save_model = False
-
+save_model = False
 # create experiment:
 ex = Experiment('PAN_CANCER_regressor_DS')
 

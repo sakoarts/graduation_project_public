@@ -4,6 +4,7 @@ This experiment is sacred enbeld meaning that it will save the output in a file 
 This experiment does classification and needs to be controlled by the threaded.py script, it will not run on its own
 """
 
+
 import numpy as np
 import pandas as pd
 import h5py
@@ -28,11 +29,7 @@ from sacred.observers import MongoObserver
 
 # DEBUG parameters
 DEBUG = True
-if DEBUG:
-    save_model = False
-else:
-    save_model = False
-
+save_model = False
 # create experiment:
 ex = Experiment('PAN_CANCER_classifier_final')
 
@@ -88,13 +85,7 @@ def my_config():
 def data(data_path, label_path, subset_label, predict_label, split_label, subset_query, tt_split, _seed, genes_to_select, class_weight=None, preload=True):
     # Select genes and set row size variable
     f = h5py.File(data_path, 'r')
-    if preload:
-        data_h5 = {}
-        for key in f.keys():
-            data_h5[key] = f[key][:]
-    else:
-        data_h5 = f
-
+    data_h5 = {key: f[key][:] for key in f.keys()} if preload else f
     rows = data_h5['gene_id'].shape[0]
     gene_names = data_h5['gene_id'][:].astype('str')
     #gene_names = np.zeros(rows).astype('str')
