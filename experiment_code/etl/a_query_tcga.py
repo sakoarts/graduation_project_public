@@ -81,10 +81,7 @@ def get_all_projects(data_abv=None):
     p_data = resp_dict['data']['hits']
     projects = []
     for p in p_data:
-        project = []
-        project.append(p['project_id'])
-        project.append(p['name'])
-        project.append(p['primary_site'])
+        project = [p['project_id'], p['name'], p['primary_site']]
         if data_abv is not None:
             file_type = abv_data_cat[data_abv]
             for cat in p['summary']['data_categories']:
@@ -121,9 +118,8 @@ def sample_type_id_is_tumor(type_id):
 def all_cases_data_type(data_abv, overwrite_cases=False, verbose=100):
     cases_file = '{}/cases_{}.csv'.format(project_path, data_abv)
     labels_file = os.path.join(project_path, 'case_labels_{}.csv'.format(data_abv))
-    if not overwrite_cases:
-        if os.path.exists(cases_file):
-            return pd.read_csv(cases_file, index_col=0)
+    if not overwrite_cases and os.path.exists(cases_file):
+        return pd.read_csv(cases_file, index_col=0)
 
     endpoint = 'cases'
     data_type = abv_data_type[data_abv]
@@ -146,10 +142,7 @@ def all_cases_data_type(data_abv, overwrite_cases=False, verbose=100):
                 if verbose > 25:
                     print('Case {} is missing information of type {}'.format(case_id, e))
                 continue
-            if type(info) is list:
-                label = info[0]
-            else:
-                label = info
+            label = info[0] if type(info) is list else info
             for key, val in label.items():
                 if key in recurrent_labels:
                     key = '{}_{}'.format(l, key)
@@ -320,28 +313,24 @@ def download_files_of_type_of_cases(data_abv, cases, verbose=100):
     temp_fids = []
     for index, row in cases.iterrows():
         case_id = row[0]
-        if fids is not None:
-            if any(fids.case_id == case_id):
-                if verbose > 99:
-                    print('Found case {}'.format(case_id))
-                found_case = fids.loc[fids['case_id'] == case_id]
-                idx = found_case.index[0]
-                found_fid =  found_case.values.tolist()[0][1]
-                if not 'error_' in found_fid:
-                    continue
-                else:
-                    print('An error occured on last download attempt, retrying...')
-                fids.drop(idx, inplace=True)
+        if fids is not None and any(fids.case_id == case_id):
+            if verbose > 99:
+                print('Found case {}'.format(case_id))
+            found_case = fids.loc[fids['case_id'] == case_id]
+            idx = found_case.index[0]
+            found_fid =  found_case.values.tolist()[0][1]
+            if 'error_' not in found_fid:
+                continue
+            else:
+                print('An error occured on last download attempt, retrying...')
+            fids.drop(idx, inplace=True)
 
         print("Retrieving case info {}/{} of case {}".format(index + 1, case_len, case_id))
         fid_tumor_list = getFileIdOfDataType(data_type, case_id)
 
 
         for fid_tumor in fid_tumor_list:
-            if type(fid_tumor) == list:
-                fid = fid_tumor[0]
-            else:
-                fid = fid_tumor
+            fid = fid_tumor[0] if type(fid_tumor) == list else fid_tumor
             tumor = sample_type_id_is_tumor(fid_tumor[1])
             if tumor is None:
                 print('Skipping {} due to unvalid tumor indicator'.format(fid))

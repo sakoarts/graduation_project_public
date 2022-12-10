@@ -20,11 +20,7 @@ from sacred.observers import MongoObserver
 
 # DEBUG parameters
 DEBUG = True
-if DEBUG:
-    save_model = False
-else:
-    save_model = False
-
+save_model = False
 # create experiment:
 ex = Experiment('PAN_CANCER_classifier_PS1000')
 

@@ -77,9 +77,9 @@ if __name__ == "__main__":
 
     args = []
     for ic, c in enumerate(classifiers):
+        c_name = c.__class__.__name__
         for idx, f in enumerate(range(n_folds)):
             run_delay = idx % n_threads
-            c_name = c.__class__.__name__
             c_dict = json.dumps(classifiers_params[ic])
             args.append((c_name, c_dict, f, n_genes, run_delay, timeout_sec))
 

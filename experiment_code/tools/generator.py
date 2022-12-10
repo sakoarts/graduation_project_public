@@ -46,13 +46,7 @@ class DataGeneratorHDF5(object):
         'Generates batches of samples'
         f = h5py.File(self.path, 'r')
 
-        if self.preload:
-            cached_hdf5_file = {}
-            for key in self.keys:
-                cached_hdf5_file[key] = f[key][:]
-        else:
-            cached_hdf5_file = f
-
+        cached_hdf5_file = {key: f[key][:] for key in self.keys} if self.preload else f
         # Infinite loop
         while 1:
             # Generate order of exploration of dataset
@@ -85,11 +79,10 @@ class DataGeneratorClassifier(object):
 
         # Reading data
         cached_hdf5_file = {}
-        if self.genes_to_select is None:
-            for key in self.keys:
+        for key in self.keys:
+            if self.genes_to_select is None:
                 cached_hdf5_file[key] = f[key][:]
-        else:
-            for key in self.keys:
+            else:
                 cached_hdf5_file[key] = np.take(f[key][:], self.genes_to_select)
 
         # Reading labels

@@ -69,7 +69,7 @@ def gene_predictive_accuracy(output, selected_genes_ids, folds=10, latex=False, 
     genes_to_select = selected_genes_ids
     out_conf = output[0]['config']
     classifier_name = out_conf['classifier_name']
-    regression = classifier_name == 'RandomForestRegressor' or classifier_name == 'LinearSVR'
+    regression = classifier_name in ['RandomForestRegressor', 'LinearSVR']
 
     data_file = '../data/TCGA/exp_TCGA_coded_normalized.hdf5'
     label_file = '../data/TCGA/exp_TCGA_coded_labels_add.csv'
@@ -90,7 +90,7 @@ def gene_predictive_accuracy(output, selected_genes_ids, folds=10, latex=False, 
             LinearSVC(C=0.25),
             RandomForestClassifier(n_estimators=100, n_jobs=-1),
         ]
-    
+
     print('Reading data')
     X_train, X_test, y_train, y_test, unique_labels, gene_names, sample_to_label = data(data_file, label_file,
                                                                                         subset_label, predict_label,
@@ -98,11 +98,11 @@ def gene_predictive_accuracy(output, selected_genes_ids, folds=10, latex=False, 
                                                                                         tt_split, genes_to_select)
 
     results = {}
-    
+
     for c in classifiers:
         c_name = c.__class__.__name__
         results[c_name] = []
-        for f in range(folds):
+        for _ in range(folds):
             print('Predicting and evaluating {}'.format(c_name))
             c.fit(X_train, y_train)
             y_pred = c.predict(X_test)
@@ -112,22 +112,21 @@ def gene_predictive_accuracy(output, selected_genes_ids, folds=10, latex=False, 
             else:
                 score = accuracy_score(y_test, y_pred)
             results[c_name].append(score)
-            
+
     if latex:
         print('We have {} selected genes as a result, doing the same prediction again but only with these genes we get the following accuracies averaged over {} folds:\\\\'.format(len(selected_genes_ids), folds))
-    
+
+    keys = results.keys()
     if folds > 1:
         res = {}
-        keys = results.keys()
         for k in keys:
             avr = np.average(results[k])
             var = np.var(results[k])
             res[k + '_avr'] = np.average(results[k])
             if latex:
-                print('{}: {} ({})\\\\'.format(k, '%.{}f'.format(decimal_val)%(avr), '%.{}f'.format(decimal_val)%(var))) 
+                print('{}: {} ({})\\\\'.format(k, '%.{}f'.format(decimal_val)%(avr), '%.{}f'.format(decimal_val)%(var)))
         results = {**res, **results}
     else:
-        keys = results.keys()
         for k in keys:
             if latex:
                 print('{}: {}\\\\'.format(k, '%.{}f'.format(decimal_val)%(results[k][0])))
