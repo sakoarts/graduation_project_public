@@ -102,3 +102,4 @@ ENV/
 
 /.idea
 experiment_code/data/
+experiment_code/myenv

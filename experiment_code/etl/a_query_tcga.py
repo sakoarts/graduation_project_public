@@ -24,8 +24,8 @@ project_path = None
 # The root path where the file stucture will begin
 out_path = '../data/TCGA'
 # The different options for expression file formats availeble, FPKM is advised
-exp_file_types = ['.htseq.counts.', '.FPKM.', '.FPKM-UQ.']
-exp_file_type = exp_file_types[1]
+#exp_file_types = ['.htseq.counts.', '.FPKM.', '.FPKM-UQ.']
+exp_file_type = 'RNA-Seq'
 
 # Dictionary mapping a file type abreviation to its official file type in the TCGA database
 abv_data_type = {
@@ -219,7 +219,8 @@ def getFileIdOfDataType(dataType, caseId):
     file_ids = []
     for h in json_out["data"]["hits"]:
         if dataType in 'Gene Expression Quantification':
-            if exp_file_type in h["file_name"]:
+            #print(h)
+            if exp_file_type == h["experimental_strategy"]:
                 fid = h["file_id"]
                 if 'sample_type_id' in h['cases'][0]['samples'][0]:
                     sample_type_id = h['cases'][0]['samples'][0]['sample_type_id']
